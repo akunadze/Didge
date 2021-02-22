@@ -87,6 +87,15 @@ namespace threads {
         return {num, denom};
       }
     }
+
+    constexpr pitch_info make_pitch_info(const char* pitch, uint16_t num, uint16_t denom, pitch_type type) {
+      if (type == pitch_type::mm) {
+        return {pitch, {denom, num}, pitch_type::mm};
+      } else {
+        return {pitch, {127 * denom, 5 * num}, pitch_type::tpi};
+      }
+    }
+
   }
 
   inline namespace literals {

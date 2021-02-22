@@ -38,7 +38,8 @@ void SystemInit() {
     set(RccApb2enr::tim1en),
     set(RccApb2enr::usart1en),
     set(RccApb1enr::usart2en),
-    set(RccAhbenr::dma1en)
+    set(RccAhbenr::dma1en),
+    set(RccApb1enr::spi2en)
   );
   
   // Systick timer

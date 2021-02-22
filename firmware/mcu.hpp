@@ -36,6 +36,17 @@ namespace mcu {
 
     using uart1_remapped_TX = Kvasir::gpio::Pin<Kvasir::gpio::PB, 6>; 
     using uart1_remapped_RX = Kvasir::gpio::Pin<Kvasir::gpio::PB, 7>;
+
+    using selector_A = Kvasir::gpio::Pin<Kvasir::gpio::PA, 6>;
+    using selector_B = Kvasir::gpio::Pin<Kvasir::gpio::PA, 7>;
+
+    using display_clk = Kvasir::gpio::Pin<Kvasir::gpio::PB, 13>;
+    using display_cs = Kvasir::gpio::Pin<Kvasir::gpio::PB, 14>;
+    using display_miso = Kvasir::gpio::Pin<Kvasir::gpio::PB, 15>;
+
+    using switch_mm = Kvasir::gpio::Pin<Kvasir::gpio::PA, 3>;
+    using switch_feed = Kvasir::gpio::Pin<Kvasir::gpio::PA, 4>;
+    using switch_dir = Kvasir::gpio::Pin<Kvasir::gpio::PA, 5>;
   }
   
   // Static (i.e. compile time) map of used IRQs and their values
@@ -46,15 +57,17 @@ namespace mcu {
       case Kvasir::IRQ::tim1_cc_irqn: return 2;
       case Kvasir::IRQ::tim3_irqn:    return 4;
       case Kvasir::IRQ::usart1_irqn:  return 6;
+      case Kvasir::IRQ::tim4_irqn:    return 14;
       case Kvasir::IRQ::systick_irqn: return 15;
+      default:                        return 15;
     }
   };
   
   template <Kvasir::nvic::irq_number_t irq_n>
-  inline void enable_interrupt() {
+  inline void enable_interrupt(bool enable = true) {
     using irq = Kvasir::nvic::irq<irq_n>;
     apply(
-      write(irq::setena, true),
+      write(irq::setena, enable),
       write(irq::ipr, mcu::interrupt_priorities(irq_n))
     );
   }
@@ -70,7 +83,6 @@ namespace mcu {
 
     apply(write(pins::debug_pin::cr::mode, gpio::PinMode::Output_2Mhz),
           write(pins::debug_pin::cr::cnf, gpio::PinConfig::Output_push_pull));
-    
   }
   
   inline volatile unsigned int milliseconds = 0;

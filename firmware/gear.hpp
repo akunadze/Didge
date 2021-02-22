@@ -48,14 +48,23 @@ namespace gear {
 #pragma GCC diagnostic pop
 
   Range range;
+  State nextState;
+  bool nextExists = false;
 
   template <typename RationalNumber>
-  void configure(const RationalNumber& ratio, uint16_t start_position) {
-    state.D = ratio.denominator();
-    state.N = ratio.numerator();
-    state.err = 0;
-    range.next = next_jump_forward(ratio.denominator(), ratio.numerator(), 0, start_position);
-    range.prev = next_jump_reverse(ratio.denominator(), ratio.numerator(), 0, start_position);
+  void configure(const RationalNumber& ratio, uint16_t start_position, bool stopped) {
+    if (stopped) {
+      state.D = ratio.denominator();
+      state.N = ratio.numerator();
+      state.err = 0;
+      range.next = next_jump_forward(ratio.denominator(), ratio.numerator(), 0, start_position);
+      range.prev = next_jump_reverse(ratio.denominator(), ratio.numerator(), 0, start_position);
+    } else {
+      nextState.D = ratio.denominator();
+      nextState.N = ratio.numerator();
+      nextState.err = 0;
+      nextExists = true;
+    }
   }
   
   inline unsigned phase_delay(uint16_t input_period, int e) {
